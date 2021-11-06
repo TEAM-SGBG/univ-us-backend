@@ -4,14 +4,19 @@ const session = require('express-session');
 const dotenv=require(`dotenv`);
 const path = require('path');
 dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
+
+
 const api = require('./routes/api');
 const db = require('./routes/database');
+const connectDB = require('./config/connectDB');
 
 const app=express();
 const port = process.env.PORT || 3001;
 
-
-db();
+connectDB.connect((err)=>{
+    if(err) console.error(`err : `+err);
+    else console.log(`연결 성공`);
+})
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended:true}));
@@ -34,7 +39,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 app.use('/api', api);
-
+app.use('/database',db);
  /* app.use(
     session({
         secret:'keyboard cat', 
