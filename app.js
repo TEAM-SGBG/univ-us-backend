@@ -5,6 +5,7 @@ const dotenv=require(`dotenv`);
 const path = require('path');
 dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 const api = require('./routes/api');
+const events = require('./routes/events')
 const db = require('./routes/database');
 
 const app=express();
@@ -13,8 +14,8 @@ const port = process.env.PORT || 3001;
 
 db();
 
-app.use(express.json()); 
 app.use(express.urlencoded({extended:true}));
+app.use(express.json()); 
 
 app.use(cookieParser());
 
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 app.use('/api', api);
+app.use('/api/events', events);
 
  /* app.use(
     session({
