@@ -7,6 +7,8 @@ dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 
 
 const api = require('./routes/api');
+const events = require('./routes/events')
+const mypage = require('./routes/mypage')
 const db = require('./routes/database');
 const connectDB = require('./config/connectDB');
 
@@ -18,8 +20,8 @@ connectDB.connect((err)=>{
     else console.log(`연결 성공`);
 })
 
-app.use(express.json()); 
 app.use(express.urlencoded({extended:true}));
+app.use(express.json()); 
 
 app.use(cookieParser());
 
@@ -40,6 +42,9 @@ app.get('/', (req, res) => {
 });
 app.use('/api', api);
 app.use('/database',db);
+app.use('/api/events', events);
+app.use('/api/mypage', mypage);
+
  /* app.use(
     session({
         secret:'keyboard cat', 
