@@ -76,20 +76,31 @@ router.post('/apply', (req, res) => {
             res.status(400).json({
                 success: false,
                 err: err,
-                description: "event_id error"
+                message: "event_id error"
             })
         }
     })
-    // TODO: event_participant가 관계 테이블이므로 (event_id(FK), id_token(FK)) 면 충분하지 않을까 싶음
-    // TODO: 따라서 evnet_participant의 id 테이블을 없애거나 자동 증가하도록 수정할 필요가 있음
-    conn.query(`insert into event_participant(id, event_id, participant) values(0, ${event_id}, '${id_token}')`,(err,result)=>{
-        if(err){
-            res.send(err);
-        }else{
-            res.status(200).json({
-                success: true,
-                message: "event/apply SUCCESS"
-            });
+    conn.query(`select * from event_participant where event_id=${event_id} and participant='${id_token}'`, (err, result) => {
+        if(result){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "already applied"
+            })
+        }
+        else{
+            // TODO: event_participant가 관계 테이블이므로 (event_id(FK), id_token(FK)) 면 충분하지 않을까 싶음
+            // TODO: 따라서 evnet_participant의 id 테이블을 없애거나 자동 증가하도록 수정할 필요가 있음
+            conn.query(`insert into event_participant(id, event_id, participant) values(2, ${event_id}, '${id_token}')`,(err,result)=>{
+                if(err){
+                    res.send(err);
+                }else{
+                    res.status(200).json({
+                        success: true,
+                        message: "event/apply SUCCESS"
+                    });
+                }
+            })
         }
     })
 })

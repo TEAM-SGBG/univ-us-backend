@@ -6,6 +6,7 @@ const path = require('path');
 dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 const api = require('./routes/api');
 const events = require('./routes/events')
+const mypage = require('./routes/mypage')
 const db = require('./routes/database');
 
 const app=express();
@@ -36,6 +37,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api', api);
 app.use('/api/events', events);
+app.use('/api/mypage', mypage);
 
  /* app.use(
     session({
