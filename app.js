@@ -3,13 +3,15 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const dotenv=require(`dotenv`);
 const path = require('path');
+const cors= require(`cors`);
+
 dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 
 
 const api = require('./routes/api');
 const events = require('./routes/events')
 const mypage = require('./routes/mypage')
-const db = require('./routes/database');
+const channel = require('./routes/channel');
 const connectDB = require('./config/connectDB');
 
 const app=express();
@@ -22,6 +24,7 @@ connectDB.connect((err)=>{
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
+app.use(cors());
 
 app.use(cookieParser());
 
@@ -41,7 +44,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 app.use('/api', api);
-app.use('/database',db);
+app.use('/api/channel',channel);
 app.use('/api/events', events);
 app.use('/api/mypage', mypage);
 
