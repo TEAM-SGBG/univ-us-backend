@@ -11,6 +11,7 @@ const events = require('./routes/events')
 const mypage = require('./routes/mypage')
 const db = require('./routes/database');
 const connectDB = require('./config/connectDB');
+const subscribes = require('./routes/subscribes')
 
 const app=express();
 const port = process.env.PORT || 3001;
@@ -44,6 +45,7 @@ app.use('/api', api);
 app.use('/database',db);
 app.use('/api/events', events);
 app.use('/api/mypage', mypage);
+app.use('/api/subscribes', subscribes)
 
  /* app.use(
     session({
