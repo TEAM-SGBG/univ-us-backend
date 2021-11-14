@@ -15,6 +15,7 @@ const mypage = require('./routes/mypage')
 const channel = require('./routes/channel');
 const auth = require('./routes/auth');
 const connectDB = require('./config/connectDB');
+const subscribes = require('./routes/subscribes')
 const MySQLStore = require('express-mysql-session');
 
 const app=express();
@@ -63,6 +64,7 @@ app.use('/auth', auth);
 app.use('/api/channel',channel);
 app.use('/api/events', events);
 app.use('/api/mypage', mypage);
+app.use('/api/subscribes', subscribes)
 
  /* app.use(
     session({
