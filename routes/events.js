@@ -5,7 +5,6 @@ const conn = require('../config/connectDB');
 
 // 1. 행사 정보 불러오기 (추후 세부 조건 별로 가져오는 API 추가 예정)
 router.get('/load_list', (req, res) => {
-    
     conn.query(`select * from event`,(err,result)=>{
         if(err){
             console.log('/evnets/load_list')
