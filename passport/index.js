@@ -13,7 +13,7 @@ module.exports=()=>{
         console.log(`deserialize`);
         conn.query(`SELECT * FROM user WHERE id_token=${id}`,(err,user)=>{
             console.log(user);
-            done(null,user);
+            done(null,user[0]);
         });//유저정보 넘김
         
     });
