@@ -9,7 +9,6 @@ dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 
 
 const passportConfig=require(`./passport/index`);
-const api = require('./routes/api');
 const events = require('./routes/events')
 const mypage = require('./routes/mypage')
 const channel = require('./routes/channel');
@@ -53,7 +52,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.use('/api', api);
 app.use('/auth', auth);
 app.use('/api/channel',channel);
 app.use('/api/events', events);
@@ -73,4 +71,3 @@ app.use('/api/subscribes', subscribes)
 app.listen(port,()=>{
     console.log(`Univ-us server start in port ${port}`);
 })
-
