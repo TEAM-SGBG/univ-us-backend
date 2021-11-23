@@ -14,8 +14,8 @@ const conn = require('../config/connectDB');
  */
 
 // 1. 신청한 행사 전부 가져오기
-router.post('/all_event', (req, res) => {
-    const id_token = req.body.id_token
+router.get('/all_event', (req, res) => {
+    const id_token = req.user
     
     conn.query(`select * from event_participant where participant='${id_token}'`,(err,result) => {
         if(err){
@@ -82,8 +82,8 @@ router.put('/modify_info', (req, res) => {
 })
 
 // 4. 구독 정보 가져오기
-router.post('/subscribe_info', (req, res) => {
-    const id_token = req.body.id_token
+router.get('/subscribe_info', (req, res) => {
+    const id_token = req.user
     
     conn.query(`select * from channel_subscriber where subscriber_id='${id_token}'`,(err,result) => {
         if(err){

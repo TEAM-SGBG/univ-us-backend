@@ -101,9 +101,7 @@ router.post('/apply', (req, res) => {
             })
         }
         else{
-            // TODO: event_participant가 관계 테이블이므로 (event_id(FK), id_token(FK)) 면 충분하지 않을까 싶음
-            // TODO: 따라서 evnet_participant의 id 테이블을 없애거나 자동 증가하도록 수정할 필요가 있음
-            conn.query(`insert into event_participant(id, event_id, participant) values(2, ${event_id}, '${id_token}')`,(err,result)=>{
+            conn.query(`insert into event_participant(event_id, participant) values(${event_id}, '${id_token}')`,(err,result)=>{
                 if(err){
                     res.status(400).json({
                         success: false,
