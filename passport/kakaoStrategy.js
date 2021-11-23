@@ -30,10 +30,8 @@ module.exports=()=>{
                         }
                         done(null,newUser);
                     });
-         
                 });
             }
-
         });
     }));
 }
