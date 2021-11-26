@@ -123,7 +123,7 @@ router.delete(`/subscribe/:channel_id/:subscriber_id`,(req,res)=>{
     })
 });//구독취소
 
-router.get(`/:channel_id`,(req,res)=>{
+router.get(`/info:channel_id`,(req,res)=>{
     let channelInfo={};
     conn.query(`SELECT* FROM channel WHERE channel_id=${req.params.channel_id}`,(err,result1)=>{
         if(err){
@@ -153,7 +153,24 @@ router.get(`/:channel_id`,(req,res)=>{
 
 });// 특정 채널정보(구독자 수)
 
-
+router.get(`/subscribe`,(req,res)=>{
+    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.user.id_token}`,(err,result)=>{
+        if(err){
+            console.log(err);
+            res.status(400).json({
+                success: false,
+                message: err,
+            });
+        }else{
+            console.log(result);
+            res.status(200).json({
+                success:true,
+                message:'SUCCESS GET:channel/subscribe',
+                data:result,
+            });
+        }
+    });
+});//구독한 채널 정보 가져옴
 
 
 module.exports = router;
