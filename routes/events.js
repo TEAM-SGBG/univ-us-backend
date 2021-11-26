@@ -215,7 +215,9 @@ router.delete('/cancel', (req, res) => {
 // 7. 행사 구체 정보 가져오기
 router.post('/detail', (req, res) => {
     const event_id = req.body.event_id
-    conn.query(`select * from event where event_id=${event_id}`, (err, result) => {
+    var sql1 = `select * from event where event_id=${event_id};`
+    var sql2 = `update event set views=views+1 where event_id=${event_id};`
+    conn.query(sql1 + sql2, (err, result, field) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -234,7 +236,7 @@ router.post('/detail', (req, res) => {
                 res.status(200).json({
                     success: true,
                     message: "api/event/detail SUCCESS",
-                    data: result
+                    data: result[0]
                 })
             }
         }
@@ -304,7 +306,7 @@ router.get('/get_new_events', (req, res) => {
 })
 
 // 11. 추천 이벤트 가져오기(4개) // 맹그는 중
-router.get('/get_new_events', (req, res) => {
+router.get('/get_recommanded_events', (req, res) => {
     conn.query(`select * from event`, (err, result) => {
         if(err){
             res.status(400).json({

@@ -9,7 +9,8 @@ const conn=mysql.createConnection({
     port: '3306',//DB설치할 때 사용자가 지정한 포트번호 기본값 3306
     user: 'admin',//DB의 user이름
     password: process.env.PW,//비번
-    database: 'univus'//사용할 데이터베이스 명
+    database: 'univus',//사용할 데이터베이스 명
+    multipleStatements: true
 });
 
 
