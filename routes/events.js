@@ -155,4 +155,25 @@ router.delete('/cancel', (req, res) => {
     })
 })
 
+// 5. 행사 구체 정보 가져오기
+router.post('/detail', (req, res) => {
+    const event_id = req.body.event_id
+    conn.query(`select * from event where event_id=${event_id}`, (err, result) => {
+        if(result.length == 0){
+            res.status(400).json({
+                success: false,
+                err: err,
+                description: "[ERROR] 해당 이벤트가 존재하지 않음"
+            })
+        }
+        else{
+            res.json(200).json({
+                success: true,
+                description: "api/event/detail SUCCESS",
+                data: result
+            })
+        }
+    })
+})
+
 module.exports = router; 
