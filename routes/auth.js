@@ -29,8 +29,9 @@ router.get('/kakao',(req,res,next)=>{
 router.get('/kakao/callback',passport.authenticate('kakao',{failureRedirect:'/',}),//로그인 성공여부 결과 받음
 (req,res)=>{
     console.log(`로그인완료`);
-        //console.log(req.session);//사용자 id만
-    //req.session.passport.user//사용자 전체정보
+        //console.log(req.session);//사용자 전체정보
+        //req.user
+    //req.session.passport.user//사용자 id만 
     res.redirect('http://localhost:3000'+req.session.redirect);
 });
 //kakao 로그인은내부적으로 req.login호출하므로 직접 호출할 필요없음
@@ -47,6 +48,6 @@ router.get(
     (req, res) => {
     console.log("로그인 완료");
     res.redirect('http://localhost:3000'+req.session.redirect);
-  });
+});
   
 module.exports=router;
