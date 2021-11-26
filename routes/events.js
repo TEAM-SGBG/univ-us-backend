@@ -3,27 +3,63 @@ const router=express.Router();
 
 const conn = require('../config/connectDB');
 
-// 1. 행사 정보 불러오기 (추후 세부 조건 별로 가져오는 API 추가 예정)
+// 1. 전체 행사 정보 불러오기
 router.get('/all_event', (req, res) => {
     
     conn.query(`select * from event`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
-                message: err
+                err: err,
+                message: 'ERROR events/all_event'
             })
         }
         else{
             res.status(200).json({
                 success: true,
-                message: 'SUCCESS events/load_list',
+                message: 'SUCCESS events/all_event',
                 data: result
             })
         }
     })
 })
 
-// 2. 헹사 생성
+// 2. 특정 카테고리 행사 정보 불러오기
+router.get('/category_event', (req, res) => {
+    const category = req.query.category
+    var category_num = 0;
+    switch (category) {
+        case 'sushi':
+            category_num = 1;
+            break;
+        case 'jungshi':
+            category_num = 2;
+            break;
+        case 'fair':
+            category_num = 3;
+            break;
+        default:
+            break;
+    }
+    conn.query(`select * from event where category=${category_num}`,(err,result)=>{
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: 'ERROR events/category_event'
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: 'SUCCESS events/category_event',
+                data: result
+            })
+        }
+    })
+})
+
+// 3. 헹사 생성
 router.post('/create', (req,res) => {
     const event_id = req.body.event_id
     const event_name = req.body.event_name
@@ -44,7 +80,7 @@ router.post('/create', (req,res) => {
     })
 })
 
-// 3. 행사 삭제
+// 4. 행사 삭제
 router.delete('/delete', (req,res) => {
     const event_id = req.body.event_id
     conn.query(`select * from event_participant where event_id='${event_id}'`, (err, result) =>{
@@ -70,7 +106,7 @@ router.delete('/delete', (req,res) => {
     })
 })
 
-// 4. 행사 신청하기
+// 5. 행사 신청하기
 router.post('/apply', (req, res) => {
     const id_token = req.body.id_token
     const event_id = req.body.event_id
@@ -118,7 +154,7 @@ router.post('/apply', (req, res) => {
     })
 })
 
-// 4. 행사 신청 취소하기(유저 입장)
+// 6. 행사 신청 취소하기(유저 입장)
 router.delete('/cancel', (req, res) => {
     const id_token = req.body.id_token
     const event_id = req.body.event_id
@@ -127,7 +163,7 @@ router.delete('/cancel', (req, res) => {
             res.status(400).json({
                 success: false,
                 err: err,
-                description: "user_id error"
+                message: "user_id error"
             })
         }
     })
@@ -136,7 +172,7 @@ router.delete('/cancel', (req, res) => {
             res.status(400).json({
                 success: false,
                 err: err,
-                description: "event_id error"
+                message: "event_id error"
             })
         }
     })
@@ -155,7 +191,7 @@ router.delete('/cancel', (req, res) => {
     })
 })
 
-// 5. 행사 구체 정보 가져오기
+// 7. 행사 구체 정보 가져오기
 router.post('/detail', (req, res) => {
     const event_id = req.body.event_id
     conn.query(`select * from event where event_id=${event_id}`, (err, result) => {
@@ -163,26 +199,28 @@ router.post('/detail', (req, res) => {
             res.status(400).json({
                 success: false,
                 err: err,
-                description: "[ERROR] api/event/detail"
-            })
-        }
-        if(result.length == 0){
-            res.status(400).json({
-                success: false,
-                description: "[ERROR] 해당 이벤트가 존재하지 않음"
+                message: "[ERROR] api/event/detail"
             })
         }
         else{
-            res.status(200).json({
-                success: true,
-                description: "api/event/detail SUCCESS",
-                data: result
-            })
+            if(result.length == 0){
+                res.status(400).json({
+                    success: false,
+                    message: "[ERROR] 해당 이벤트가 존재하지 않음"
+                })
+            }
+            else{
+                res.status(200).json({
+                    success: true,
+                    message: "api/event/detail SUCCESS",
+                    data: result
+                })
+            }
         }
     })
 })
 
-// 6. 특정 행사에 참여한 사용자 아이디 리스트 가져오기
+// 8. 특정 행사에 참여한 사용자 아이디 리스트 가져오기
 router.post('/get_participants', (req, res) => {
     const event_id = req.body.event_id
     conn.query(`select participant from event_participant where event_id=${event_id}`, (err, result) => {
@@ -190,19 +228,78 @@ router.post('/get_participants', (req, res) => {
             res.status(400).json({
                 success: false,
                 err: err,
-                description: "[ERROR] api/event/get_participants"
+                message: "[ERROR] api/event/get_participants"
 
             })
         }
         else{
             res.status(200).json({
                 success: true,
-                description: "[SUCCESS] api/event/get_participants",
+                message: "[SUCCESS] api/event/get_participants",
                 data: result
             })
         }
     })
 })
 
+// 9. 인기 이벤트 가져오기(4개)
+router.get('/get_popular_events', (req, res) => {
+    conn.query(`select * from event order by views desc limit 4`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] api/event/get_popular_events"
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "[SUCCESS] api/event/get_popular_events",
+                data: result
+            })
+        }
+    })
+})
+
+// 10. 최신 이벤트 가져오기(4개)
+router.get('/get_new_events', (req, res) => {
+    conn.query(`select * from event order by created_at desc limit 4`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] api/event/get_new_events"
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "[SUCCESS] api/event/get_new_events",
+                data: result
+            })
+        }
+    })
+})
+
+// 11. 추천 이벤트 가져오기(4개) // 맹그는 중
+router.get('/get_new_events', (req, res) => {
+    conn.query(`select * from event`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] api/event/get_new_events"
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "[SUCCESS] api/event/get_new_events",
+                data: result
+            })
+        }
+    })
+})
 
 module.exports = router; 

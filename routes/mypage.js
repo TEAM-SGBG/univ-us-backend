@@ -17,7 +17,7 @@ const conn = require('../config/connectDB');
 router.get('/all_event', (req, res) => {
     const id_token = req.user
     
-    conn.query(`select * from event_participant where participant='${id_token}'`,(err,result) => {
+    conn.query(`select event_id from event_participant where participant='${id_token}'`,(err,result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -25,16 +25,12 @@ router.get('/all_event', (req, res) => {
             })
         }
         else{
-            list = []
-            for(var obj of result){
-                list.push(obj.event_id)
-            }
             // const r = result[0].event_id
             // console.log(r.event_id)
             res.status(200).json({
                 success: true,
                 message: 'SUCCESS mypage/all_event',
-                data: list
+                data: result
             })
         }
     })
