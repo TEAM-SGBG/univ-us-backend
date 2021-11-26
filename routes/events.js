@@ -41,22 +41,43 @@ router.get('/category_event', (req, res) => {
         default:
             break;
     }
-    conn.query(`select * from event where category=${category_num}`,(err,result)=>{
-        if(err){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: 'ERROR events/category_event'
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: 'SUCCESS events/category_event',
-                data: result
-            })
-        }
-    })
+    if(category_num == 0){
+        conn.query(`select * from event`,(err,result)=>{
+            if(err){
+                res.status(400).json({
+                    success: false,
+                    err: err,
+                    message: 'ERROR events/all_event'
+                })
+            }
+            else{
+                res.status(200).json({
+                    success: true,
+                    message: 'SUCCESS events/all_event',
+                    data: result
+                })
+            }
+        })
+    }
+    else{
+        conn.query(`select * from event where category=${category_num}`,(err,result)=>{
+            if(err){
+                res.status(400).json({
+                    success: false,
+                    err: err,
+                    message: 'ERROR events/category_event'
+                })
+            }
+            else{
+                res.status(200).json({
+                    success: true,
+                    message: 'SUCCESS events/category_event',
+                    data: result
+                })
+            }
+        })
+    }
+    
 })
 
 // 3. 헹사 생성
