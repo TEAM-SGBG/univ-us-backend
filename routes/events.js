@@ -159,15 +159,21 @@ router.delete('/cancel', (req, res) => {
 router.post('/detail', (req, res) => {
     const event_id = req.body.event_id
     conn.query(`select * from event where event_id=${event_id}`, (err, result) => {
-        if(result.length == 0){
+        if(err){
             res.status(400).json({
                 success: false,
                 err: err,
+                description: "[ERROR] api/event/detail"
+            })
+        }
+        if(result.length == 0){
+            res.status(400).json({
+                success: false,
                 description: "[ERROR] 해당 이벤트가 존재하지 않음"
             })
         }
         else{
-            res.json(200).json({
+            res.status(200).json({
                 success: true,
                 description: "api/event/detail SUCCESS",
                 data: result
@@ -175,5 +181,28 @@ router.post('/detail', (req, res) => {
         }
     })
 })
+
+// 6. 특정 행사에 참여한 사용자 아이디 리스트 가져오기
+router.post('/get_participants', (req, res) => {
+    const event_id = req.body.event_id
+    conn.query(`select participant from event_participant where event_id=${event_id}`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                description: "[ERROR] api/event/get_participants"
+
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                description: "[SUCCESS] api/event/get_participants",
+                data: result
+            })
+        }
+    })
+})
+
 
 module.exports = router; 
