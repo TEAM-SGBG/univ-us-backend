@@ -16,7 +16,7 @@ const isLogin = require('../routes/login/isLogin.js');
 
 // 1. 신청한 행사 전부 가져오기
 router.get('/applied_event', isLogin, (req, res) => {
-    const id_token = req.user.id_token
+    const id_token = req.session.passport.user
     //const id_token = req.query.id_token
     
     conn.query(`select * from event where event_id 
@@ -41,7 +41,7 @@ router.get('/applied_event', isLogin, (req, res) => {
 
 // 2. 회원정보 가져오기
 router.get('/my_info', isLogin, (req, res) => {
-    const id_token = req.user.id_token
+    const id_token = req.session.passport.user
     conn.query(`select * from user where id_token='${id_token}'`, (err, result) => {
         if(err){
             res.status(400).json({
@@ -61,8 +61,8 @@ router.get('/my_info', isLogin, (req, res) => {
 
 // 3. 회원정보 수정하기
 router.put('/modify_info', isLogin, (req, res) => {
-    const id_token = req.body.id_token
-    const new_phone_num = req.body.phone_num
+    const id_token =req.session.passport.user
+    const new_phone_num = req.user.phone_num
     conn.query(`update user set phone_num='${new_phone_num}' where id_token='${id_token}'`, (err, result) => {
         if(err){
             res.status(400).json({
