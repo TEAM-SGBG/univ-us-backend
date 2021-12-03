@@ -12,6 +12,7 @@ const passportConfig=require(`./passport/index`);
 const events = require('./routes/events')
 const mypage = require('./routes/mypage')
 const channel = require('./routes/channel');
+const hostCenter = require('./routes/hostCenter');
 const auth = require('./routes/auth');
 const connectDB = require('./config/connectDB');
 const MySQLStore = require('express-mysql-session');
@@ -55,6 +56,7 @@ app.use('/auth', auth);
 app.use('/api/channel',channel);
 app.use('/api/events', events);
 app.use('/api/mypage', mypage);
+app.use('/api/hostCenter', hostCenter);
 
  /* app.use(
     session({

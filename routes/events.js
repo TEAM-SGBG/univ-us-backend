@@ -97,57 +97,6 @@ router.get('/category_event', (req, res) => {
     
 })
 
-// 3. 헹사 생성
-router.post('/create', (req,res) => {
-    const event_name = req.body.event_name
-    const host_id = req.body.host_id
-    const duration = req.body.duration
-    const description = req.body.description
-    const img_url = req.body.img_url
-    const category = req.body.category
-    conn.query(`insert into event(category, channel_owner_id, name, img_url, expired_at, description) 
-                    values(${category}, '${host_id}', '${event_name}', '${img_url}', DATE_ADD(NOW(), INTERVAL ${duration} DAY), '${description}')`,(err,result)=>{
-        if(err){
-            res.status(400).json({
-                success: false,
-                message: err
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: "events/create SUCCESS"
-            })
-        }
-    })
-})
-
-// 4. 행사 삭제
-router.delete('/delete', (req,res) => {
-    const event_id = req.body.event_id
-    conn.query(`select * from event_participant where event_id='${event_id}'`, (err, result) =>{
-        if(result.length != 0){
-            res.status(200).json({
-                success: false,
-                message: 'Still have appliments of the event. It must have zero appliment.'
-            })
-        }
-    })
-    conn.query(`delete from event where event_id=${event_id}`,(err,result)=>{
-        if(err){
-            res.status(400).json({
-                success: false,
-                message: err
-            })
-        }else{
-            res.status(200).json({
-                success: true,
-                message: "events/delete SUCCESS"
-            });
-        }
-    })
-})
-
 // 5. 행사 신청하기
 router.post('/apply', (req, res) => {
     const id_token = req.body.id_token
@@ -260,28 +209,6 @@ router.post('/detail', (req, res) => {
                     data: result[0]
                 })
             }
-        }
-    })
-})
-
-// 8. 특정 행사에 참여한 사용자 아이디 리스트 가져오기
-router.post('/get_participants', (req, res) => {
-    const event_id = req.body.event_id
-    conn.query(`select participant from event_participant where event_id=${event_id}`, (err, result) => {
-        if(err){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: "[ERROR] api/event/get_participants"
-
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: "[SUCCESS] api/event/get_participants",
-                data: result
-            })
         }
     })
 })
