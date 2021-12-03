@@ -23,8 +23,24 @@ router.get(`/all`,(req,res,next)=>{
 });
 //전체 채널 조회
 
+router.post(`/duplicate`,(req,res)=>{
+    conn.query(`SELECT count(*) as cnt FROM channel_subscriber WHERE channel_id=${req.body.channel_id}`,(err,result)=>{
+        if(err){
+            res.status(400).json({
+                success: false,
+                message: err,
+            });
+        }else{
+            res.status(200).json({
+                success:true,
+                message:'SUCCESS POST:channel/duplicate',
+                data:result,
+            });
+        }
+    })
+});
 router.post('/create',(req,res)=>{
-  conn.query(`INSERT INTO channel(host_id,channel_name,channel_img) VALUES(${req.body.host_id},${req.body.channel_name},${req.body.channel_img})`,(err,result)=>{
+  conn.query(`INSERT INTO channel(channel_id,host_id,channel_name,channel_img) VALUES(${req.body.channel_id},${req.session.passport.id_token},${req.body.channel_name},${req.body.channel_img})`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
