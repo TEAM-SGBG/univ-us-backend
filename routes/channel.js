@@ -86,7 +86,7 @@ router.delete('/:channel_id',(req,res)=>{
 });//특정 채널 삭제
 
 router.post(`/subscribe`,(req,res)=>{
-    conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id) VALUES(${req.body.channel_id},${req.user.id_token})`,(err,result)=>{
+    conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id) VALUES(${req.body.channel_id},${req.session.passport.user})`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
@@ -114,7 +114,7 @@ router.post(`/subscribe`,(req,res)=>{
 });//구독하기
 
 router.delete(`/subscribe/:channel_id`,(req,res)=>{
-    conn.query(`DELETE FROM channel_subscriber WHERE channel_id=${req.params.channel_id} AND subscriber_id=${req.user.id_token}`,(err,result)=>{
+    conn.query(`DELETE FROM channel_subscriber WHERE channel_id=${req.params.channel_id} AND subscriber_id=${req.session.passport.user}`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
@@ -174,7 +174,7 @@ router.get(`/info:channel_id`,(req,res)=>{
 
 router.get(`/subscribe`,(req,res)=>{
     console.log(req.session);
-    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.user.id_token}`,(err,result)=>{
+    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
         if(err){
             console.log(err);
             res.status(400).json({
@@ -193,7 +193,7 @@ router.get(`/subscribe`,(req,res)=>{
 });//구독한 채널 정보 가져옴
 
 router.get(`/popular`,(req,res)=>{
-    conn.query(`SELECT * FROM channel ORDER BY subscriber_count DESC`,(err,result)=>{
+    conn.query(`SELECT * FROM(SELECT * FROM channel ORDER BY subscriber_count DESC) WHERE ROWNUM<=4`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
@@ -207,6 +207,8 @@ router.get(`/popular`,(req,res)=>{
             });
         }
     })
-});//채널 구독순으로 내림차순 제공
+});//채널 구독순으로 내림차순 제공 상위 4개만
+
+
 
 module.exports = router;

@@ -100,6 +100,21 @@ router.post('/get_participants', (req, res) => {
         }
     })
 })
-
-
+//5. 내 채널리스트 가져오기
+router.get(`/mychannel`,(req,res)=>{
+    conn.query(`SELECT* FROM channel WHERE host_id=${req.session.passport.user}`,(err,result)=>{
+        if(err){
+            res.status(400).json({
+                success: false,
+                message: err,
+            });
+        }else{
+            res.status(200).json({
+                success:true,
+                message:'SUCCESS GET:mychannel:host_id',
+                data:result,
+            });
+        }
+    })
+});
 module.exports = router; 
