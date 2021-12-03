@@ -40,7 +40,7 @@ router.post(`/duplicate`,(req,res)=>{
     })
 });
 router.post('/create',(req,res)=>{
-  conn.query(`INSERT INTO channel(channel_id,host_id,channel_name,channel_img) VALUES(${req.body.channel_id},${req.session.passport.id_token},${req.body.channel_name},${req.body.channel_img})`,(err,result)=>{
+  conn.query(`INSERT INTO channel(channel_id,host_id,channel_name) VALUES(${req.body.channel_id},${req.session.passport.id_token},${req.body.channel_name})`,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
@@ -189,25 +189,7 @@ router.get(`/info:channel_id`,(req,res)=>{
 
 });// 특정 채널정보(구독자 수)
 
-router.get(`/subscribe`,isLogin,(req,res)=>{
-    console.log(req.session);
-    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
-        if(err){
-            console.log(err);
-            res.status(400).json({
-                success: false,
-                message: err,
-            });
-        }else{
-            console.log(result);
-            res.status(200).json({
-                success:true,
-                message:'SUCCESS GET:channel/subscribe',
-                data:result,
-            });
-        }
-    });
-});//구독한 채널 정보 가져옴
+
 
 router.get(`/popular`,(req,res)=>{
     conn.query(`SELECT * FROM(SELECT * FROM channel ORDER BY subscriber_count DESC) WHERE ROWNUM<=4`,(err,result)=>{
