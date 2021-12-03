@@ -6,12 +6,8 @@ const passport=require(`passport`);
 const router=express.Router();
 
 
-router.get('/',(req,res)=>{//로그인 상태확인
-    if(isLogin(req,res)){
-        res.send(req.user);
-    }else{
-        res.send(false);
-    }
+router.get('/',isLogin,(req,res)=>{//로그인 상태확인
+    res.send(req.user);
 });
 
 router.get('/logout',(req,res)=>{

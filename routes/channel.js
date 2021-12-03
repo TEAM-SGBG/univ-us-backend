@@ -173,9 +173,8 @@ router.get(`/info:channel_id`,(req,res)=>{
 
 });// 특정 채널정보(구독자 수)
 
-router.get(`/subscribe`,(req,res)=>{
+router.get(`/subscribe`,isLogin,(req,res)=>{
     console.log(req.session);
-    if(isLogin){
     conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
         if(err){
             console.log(err);
@@ -192,7 +191,6 @@ router.get(`/subscribe`,(req,res)=>{
             });
         }
     });
-    }
 });//구독한 채널 정보 가져옴
 
 router.get(`/popular`,(req,res)=>{

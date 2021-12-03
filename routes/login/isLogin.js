@@ -1,8 +1,8 @@
-const isLogin = (req, res,next) => {//로그인여부 
-    if(req.isAuthenticated()) {
+const isLogin=(req,res,next)=>{//로그인 여부
+    if (req.isAuthenticated()) {
         next();
-        return true;
-    }else return false;
+    } else {
+        res.status(403).send('로그인 필요');
+    }
 }
-
 module.exports=isLogin;
