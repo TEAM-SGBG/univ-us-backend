@@ -104,6 +104,24 @@ router.put('/modify_info', isLogin, (req, res) => {
 //     })
 // })
 
-
+router.get(`/subscribe_info`,isLogin,(req,res)=>{
+    console.log(req.session);
+    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
+        if(err){
+            console.log(err);
+            res.status(400).json({
+                success: false,
+                message: err,
+            });
+        }else{
+            console.log(result);
+            res.status(200).json({
+                success:true,
+                message:'SUCCESS GET:channel/subscribe',
+                data:result,
+            });
+        }
+    });
+});//구독한 채널 정보 가져옴
 
 module.exports = router; 
