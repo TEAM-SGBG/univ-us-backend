@@ -26,7 +26,7 @@ router.get('/kakao',(req,res,next)=>{
 },passport.authenticate('kakao'));//카카오 로그인 시작
 
 
-router.get('/kakao/callback',passport.authenticate('kakao',{failureRedirect:'/',}),//로그인 성공여부 결과 받음
+router.get('/kakao/callback',passport.authenticate('kakao',{failureRedirect:'http://localhost:3000',}),//로그인 성공여부 결과 받음
 (req,res)=>{
     console.log(`로그인완료`);
         //console.log(req.session);//사용자 전체정보
