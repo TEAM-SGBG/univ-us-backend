@@ -106,7 +106,7 @@ router.put('/modify_info', isLogin, (req, res) => {
 
 router.get(`/subscribe_info`,isLogin,(req,res)=>{
     console.log(req.session);
-    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
+    conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=?`,[req.session.passport.user],(err,result)=>{
         if(err){
             console.log(err);
             res.status(400).json({
