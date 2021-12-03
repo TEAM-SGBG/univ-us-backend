@@ -2,6 +2,7 @@ const express=require(`express`);
 const router=express.Router();
 
 const conn = require('../config/connectDB');
+const isLogin = require('../routes/login/isLogin.js');
 
 /**
  * <마이 페이지 쪽>
@@ -14,10 +15,12 @@ const conn = require('../config/connectDB');
  */
 
 // 1. 신청한 행사 전부 가져오기
-router.get('/all_event', (req, res) => {
-    const id_token = req.user
+router.get('/applied_event', isLogin, (req, res) => {
+    const id_token = req.user.id_token
+    //const id_token = req.query.id_token
     
-    conn.query(`select event_id from event_participant where participant='${id_token}'`,(err,result) => {
+    conn.query(`select * from event where event_id 
+                    in (select event_id from event_participant where participant='${id_token}')`,(err,result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -29,7 +32,7 @@ router.get('/all_event', (req, res) => {
             // console.log(r.event_id)
             res.status(200).json({
                 success: true,
-                message: 'SUCCESS mypage/all_event',
+                message: 'SUCCESS mypage/applied_event',
                 data: result
             })
         }
@@ -37,8 +40,8 @@ router.get('/all_event', (req, res) => {
 })
 
 // 2. 회원정보 가져오기
-router.post('/my_info', (req, res) => {
-    const id_token = req.body.id_token
+router.get('/my_info', isLogin, (req, res) => {
+    const id_token = req.user.id_token
     conn.query(`select * from user where id_token='${id_token}'`, (err, result) => {
         if(err){
             res.status(400).json({
@@ -57,11 +60,10 @@ router.post('/my_info', (req, res) => {
 })
 
 // 3. 회원정보 수정하기
-router.put('/modify_info', (req, res) => {
+router.put('/modify_info', isLogin, (req, res) => {
     const id_token = req.body.id_token
-    const new_password = req.body.password
     const new_phone_num = req.body.phone_num
-    conn.query(`update user set pw='${new_password}', phone_num='${new_phone_num}' where id_token='${id_token}'`, (err, result) => {
+    conn.query(`update user set phone_num='${new_phone_num}' where id_token='${id_token}'`, (err, result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -77,30 +79,30 @@ router.put('/modify_info', (req, res) => {
     })
 })
 
-// 4. 구독 정보 가져오기
-router.get('/subscribe_info', (req, res) => {
-    const id_token = req.user
+// // 4. 구독 정보 가져오기
+// router.get('/subscribe_info', (req, res) => {
+//     const id_token = req.user.id_token
     
-    conn.query(`select * from channel_subscriber where subscriber_id='${id_token}'`,(err,result) => {
-        if(err){
-            res.status(400).json({
-                success: false,
-                message: err
-            })
-        }
-        else{
-            list = []
-            for(var obj of result){
-                list.push(obj.channel_id)
-            }
-            res.status(200).json({
-                success: true,
-                message: 'SUCCESS mypage/subscribe_info',
-                data: list
-            })
-        }
-    })
-})
+//     conn.query(`select * from channel_subscriber where subscriber_id='${id_token}'`,(err,result) => {
+//         if(err){
+//             res.status(400).json({
+//                 success: false,
+//                 message: err
+//             })
+//         }
+//         else{
+//             list = []
+//             for(var obj of result){
+//                 list.push(obj.channel_id)
+//             }
+//             res.status(200).json({
+//                 success: true,
+//                 message: 'SUCCESS mypage/subscribe_info',
+//                 data: list
+//             })
+//         }
+//     })
+// })
 
 
 
