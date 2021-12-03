@@ -1,6 +1,8 @@
-const isLogin = (req, res) => {//로그인여부 
-    if(req.isAuthenticated()) return true;
-    else return false;
+const isLogin = (req, res,next) => {//로그인여부 
+    if(req.isAuthenticated()) {
+        next();
+        return true;
+    }else return false;
 }
 
 module.exports=isLogin;

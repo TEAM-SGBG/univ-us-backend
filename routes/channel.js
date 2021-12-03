@@ -2,6 +2,7 @@ const express= require('express');
 const router= express.Router();
 
 const conn = require('../config/connectDB');
+const isLogin = require('./login/isLogin');
 
 router.get(`/all`,(req,res,next)=>{
     console.log(req.session);
@@ -174,6 +175,7 @@ router.get(`/info:channel_id`,(req,res)=>{
 
 router.get(`/subscribe`,(req,res)=>{
     console.log(req.session);
+    if(isLogin){
     conn.query(`SELECT* FROM channel_subscriber JOIN channel ON channel.channel_id=channel_subscriber.channel_id WHERE subscriber_id=${req.session.passport.user}`,(err,result)=>{
         if(err){
             console.log(err);
@@ -190,6 +192,7 @@ router.get(`/subscribe`,(req,res)=>{
             });
         }
     });
+    }
 });//구독한 채널 정보 가져옴
 
 router.get(`/popular`,(req,res)=>{
@@ -207,7 +210,7 @@ router.get(`/popular`,(req,res)=>{
             });
         }
     })
-});//채널 구독순으로 내림차순 제공 상위 4개만
+});//채널 구독자순으로 내림차순 제공 상위 4개만
 
 
 
