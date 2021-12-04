@@ -28,7 +28,7 @@ router.post(`/duplicate`,(req,res)=>{
     conn.query(`SELECT count(*) as cnt FROM channel WHERE channel_id=?`,[channel_id],(err,result)=>{
         //SELECT 컬럼명 FROM 테이블명 GROUP BY 컬럼명 HAVING COUNT (컬럼명) > 1
         //SELECT channel_id FROM channel GROUP BY channel_id Having COUNT (channel_id)
-        const isDuplicated=!result[0].cnt
+        const isDuplicated=result[0]
         if(err){
             res.status(400).json({
                 success: false,
@@ -38,7 +38,7 @@ router.post(`/duplicate`,(req,res)=>{
             res.status(200).json({
                 success:true,
                 message:'SUCCESS POST:channel/duplicate',
-                data:isDuplicated,
+                data:result,
             });
         }
     })
@@ -62,9 +62,9 @@ router.post('/create',(req,res)=>{
     })
 })//채널 생성 
 
-router.patch('/:name/:new',(req,res)=>{
-    const params=[req.params.new,req.params.name]
-    conn.query(`UPDATE channel SET channel_name=? WHERE channel_name=?`,params,(err,result)=>{
+router.patch('/:channel_id/:new',isLogin,(req,res)=>{
+    const params=[req.params.new,req.params.channel_id]
+    conn.query(`UPDATE channel SET channel_name=? WHERE channel_id=?`,params,(err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
@@ -75,6 +75,7 @@ router.patch('/:name/:new',(req,res)=>{
                 success:true,
                 message:'SUCCESS PATCH: channel/:name/:new',
                 data:result,
+                update_channel_id:req.params.channel_id,
             });
         }
     });
