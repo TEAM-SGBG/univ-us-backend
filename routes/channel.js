@@ -87,14 +87,14 @@ router.delete('/:channel_id',(req,res)=>{
     //행사 하나라도 있으면 삭제 못하게
     const params=[req.params.channel_id]
     conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,params,(err1,result1)=>{
-            if(err){
+            if(err1){
                 res.status(400).json({
                     success: false,
                     message: `can't delete`,
                 });
             }else{
                 conn.query(`DELETE FROM channel WHERE channel_id=?`,params,(err2,result2)=>{
-                    if(err){
+                    if(err2){
                         res.status(400).json({
                             success: false,
                             message: err2,
