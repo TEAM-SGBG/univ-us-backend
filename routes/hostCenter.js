@@ -3,6 +3,8 @@ const router=express.Router();
 
 const conn = require('../config/connectDB');
 
+const isLogin = require('./login/isLogin');
+
 // 1. 헹사 생성
 router.post('/create', (req,res) => {
     const event_name = req.body.event_name // 이벤트 명
@@ -117,4 +119,25 @@ router.get(`/mychannel`,(req,res)=>{
         }
     })
 });
+//6. 특정 채널의 행사 불러오기
+router.get('/:channel_id/events', isLogin, (req, res) => {
+    const { channel_id } = req.params;
+
+    conn.query(`SELECT* FROM event WHERE channel_owner_id=?`, [channel_id], (err,result)=>{
+        if(err){
+            res.status(400).json({
+                success: false,
+                message: err,
+            });
+        }else{
+            res.status(200).json({
+                success: true,
+                message: 'SUCCESS GET:/:channel_id/events',
+                data: result,
+            });
+        }
+    })
+    
+});
+
 module.exports = router; 
