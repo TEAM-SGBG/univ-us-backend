@@ -28,7 +28,7 @@ router.post(`/duplicate`,(req,res)=>{
     conn.query(`SELECT count(*) as cnt FROM channel WHERE channel_id=?`,[channel_id],(err,result)=>{
         //SELECT 컬럼명 FROM 테이블명 GROUP BY 컬럼명 HAVING COUNT (컬럼명) > 1
         //SELECT channel_id FROM channel GROUP BY channel_id Having COUNT (channel_id)
-        const isDuplicated=result[0]
+        const isDuplicated=!result[0].cnt
         if(err){
             res.status(400).json({
                 success: false,
@@ -38,7 +38,7 @@ router.post(`/duplicate`,(req,res)=>{
             res.status(200).json({
                 success:true,
                 message:'SUCCESS POST:channel/duplicate',
-                data:result,
+                data:isDuplicated,
             });
         }
     })
@@ -87,14 +87,14 @@ router.delete('/:channel_id',(req,res)=>{
     //행사 하나라도 있으면 삭제 못하게
     const params=[req.params.channel_id]
     conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,params,(err1,result1)=>{
-            if(err){
+            if(err1){
                 res.status(400).json({
                     success: false,
                     message: `can't delete`,
                 });
             }else{
                 conn.query(`DELETE FROM channel WHERE channel_id=?`,params,(err2,result2)=>{
-                    if(err){
+                    if(err2){
                         res.status(400).json({
                             success: false,
                             message: err2,

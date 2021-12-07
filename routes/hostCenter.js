@@ -128,7 +128,7 @@ router.get(`/mychannel`,(req,res)=>{
 router.get('/:channel_id/events', isLogin, (req, res) => {
     const { channel_id } = req.params;
 
-    conn.query(`SELECT* FROM event WHERE channel_owner_id=?`, [channel_id], (err,result)=>{
+    conn.query(`SELECT* FROM event WHERE channel_id=?`, [channel_id], (err,result)=>{
         if(err){
             res.status(400).json({
                 success: false,
