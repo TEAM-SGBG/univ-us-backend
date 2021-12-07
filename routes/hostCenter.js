@@ -8,16 +8,17 @@ const moment = require('moment');
 
 // 1. 헹사 생성
 router.post('/create', (req,res) => {
-    const event_name = req.body.event_name // 이벤트 명
-    const host_id = req.session.passport.user       // 호스트 아이디
-    const created_at = moment(req.body.created_at).format('YYYY-MM-DD HH:MM:SS')
-    const expired_at = moment(req.body.expired_at).format('YYYY-MM-DD HH:MM:SS')
-    const description = req.body.description // 세부 내용
-    const img_url = req.body.img_url        // 이미지 url
-    const category = req.body.category.value      // 카테고리 (1: 수시행사, 2: 정시행사, 3: 박람회)
+    const event_name = req.body.event_name      // 이벤트 명
+    const host_id = req.session.passport.user   // 호스트 아이디
+    const channel_id = req.body.channel_id      // 채널 아이디
+    const created_at = moment(req.body.created_at).format('YYYY-MM-DD HH:MM:SS') // 생성 날짜
+    const expired_at = moment(req.body.expired_at).format('YYYY-MM-DD HH:MM:SS') // 신청 마감 날짜
+    const description = req.body.description    // 세부 내용
+    const img_url = req.body.img_url            // 이미지 url
+    const category = req.body.category.value    // 카테고리 (1: 수시행사, 2: 정시행사, 3: 박람회)
 
-    conn.query(`insert into event(category, channel_owner_id, name, img_url, created_at, expired_at, description) 
-                    values(${category}, '${host_id}', '${event_name}', '${img_url}', '${created_at}', '${expired_at}', '${description}')`,(err,result)=>{
+    conn.query(`insert into event(category, channel_id, channel_owner_id, name, img_url, created_at, expired_at, description) 
+                    values(${category}, '${channel_id}', '${host_id}', '${event_name}', '${img_url}', '${created_at}', '${expired_at}', '${description}')`,(err,result)=>{
         if(err){
             console.log(err)
             res.status(400).json({
