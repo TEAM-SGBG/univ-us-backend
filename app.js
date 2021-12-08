@@ -1,11 +1,11 @@
 const express=require(`express`);
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const dotenv=require(`dotenv`);
 const path = require('path');
 const cors= require(`cors`);
 const passport= require(`passport`);
-dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
+/*const dotenv=require(`dotenv`);
+dotenv.config({path: path.join(__dirname, `./credentials/.env`)});*/
 
 
 const passportConfig=require(`./passport/index`);
