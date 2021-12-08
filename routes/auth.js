@@ -4,7 +4,7 @@ const passport=require(`passport`);
 
 
 const router=express.Router();
-const myUrl=`https://univ-us.netlify.app`;
+const myUrl=`https://univ-us.herokuapp.com`;
 
 router.get('/',isLogin,(req,res)=>{//로그인 상태확인
     res.send(req.user);
