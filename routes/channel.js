@@ -28,7 +28,7 @@ router.post(`/duplicate`,(req,res)=>{
     conn.query(`SELECT count(*) as cnt FROM channel WHERE channel_id=?`,[channel_id],(err,result)=>{
         //SELECT 컬럼명 FROM 테이블명 GROUP BY 컬럼명 HAVING COUNT (컬럼명) > 1
         //SELECT channel_id FROM channel GROUP BY channel_id Having COUNT (channel_id)
-        const isDuplicated=result[0]
+        const isDuplicated=!result[0].cnt
         if(err){
             res.status(400).json({
                 success: false,
@@ -38,7 +38,7 @@ router.post(`/duplicate`,(req,res)=>{
             res.status(200).json({
                 success:true,
                 message:'SUCCESS POST:channel/duplicate',
-                data:result,
+                data:isDuplicated,
             });
         }
     })
