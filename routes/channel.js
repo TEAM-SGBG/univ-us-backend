@@ -182,26 +182,36 @@ router.get(`/info/:channel_id`,(req,res)=>{
             });
         }else{
             channelInfo=result1[0];
-            conn.query(`SELECT count(*) as cnt FROM channel_subscriber WHERE channel_id=? `,params,(err2,result2)=>{
+            conn.query(`SELECT* FROM channel_subscriber WHERE channel_id=?`,params,(err2,result2)=>{
                 if(err2){
                     res.status(400).json({
                         success: false,
                         message: err2,
                     });
                 }else{
-                    channelInfo["subscriber"]=JSON.parse(JSON.stringify(result2))[0].cnt;
-                    res.status(200).json({
-                        success:true,
-                        message:'SUCCESS GET:channel/info:channel_id',
-                        data:channelInfo,
+                    channelInfo["subscriber_list"]=JSON.parse(JSON.stringify(result2));
+                    conn.query(`SELECT count(*) as cnt FROM channel_subscriber WHERE channel_id=? `,params,(err3,result3)=>{
+                        if(err3){
+                            res.status(400).json({
+                                success: false,
+                                message: err3,
+                            });
+                        }else{
+                            channelInfo["subscriber"]=JSON.parse(JSON.stringify(result3))[0].cnt;
+                            res.status(200).json({
+                                success:true,
+                                message:'SUCCESS GET:channel/info:channel_id',
+                                data:channelInfo,
+                            });
+                        }
                     });
                 }
             });
+        
         }
     });
 
 });// 특정 채널정보(구독자 수)
-
 
 
 router.get(`/popular`,(req,res)=>{
