@@ -16,13 +16,14 @@ router.post('/create_event', (req,res) => {
     const description = req.body.description    // 세부 내용
     const img_url = req.body.img_url            // 이미지 url
     const category_tag = req.body.category.value    // 카테고리 (1: 수시행사, 2: 정시행사, 3: 박람회)
+    console.log(img_url);
 
     category = 1
     if(category_tag == 'OFFLINE')
         category = 2
     else
         category = 3
-    console.log(created_at, expired_at);
+
     conn.query(`insert into event(category, channel_id, channel_owner_id, name, img_url, created_at, expired_at, description) 
                     values(${category}, '${channel_id}', '${host_id}', '${event_name}', '${img_url}', '${created_at}', '${expired_at}', '${description}')`,(err,result)=>{
         if(err){

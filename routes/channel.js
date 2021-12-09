@@ -170,11 +170,12 @@ router.delete(`/subscribe/:channel_id`,(req,res)=>{
     })
 });//구독취소
 
-router.get(`/info:channel_id`,(req,res)=>{
+router.get(`/info/:channel_id`,(req,res)=>{
     let channelInfo={};
     const params=[req.params.channel_id];
+
     conn.query(`SELECT* FROM channel WHERE channel_id=?`,params,(err1,result1)=>{
-        if(err){
+        if(err1){
             res.status(400).json({
                 success: false,
                 message: err1,
@@ -182,7 +183,7 @@ router.get(`/info:channel_id`,(req,res)=>{
         }else{
             channelInfo=result1[0];
             conn.query(`SELECT count(*) as cnt FROM channel_subscriber WHERE channel_id=? `,params,(err2,result2)=>{
-                if(error){
+                if(err2){
                     res.status(400).json({
                         success: false,
                         message: err2,
