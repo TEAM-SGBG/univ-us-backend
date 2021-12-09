@@ -86,11 +86,13 @@ router.patch('/:channel_id/:new',isLogin,(req,res)=>{
 router.delete('/:channel_id',(req,res)=>{
     //행사 하나라도 있으면 삭제 못하게
     const params=[req.params.channel_id]
-    conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,params,(err1,result1)=>{
-            if(err1){
-                res.status(400).json({
+    conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,req.session.passport.user,(err1,result1)=>{
+        const existEvent = result1[0].success;
+        console.log(existEvent);
+            if(existEvent){
+                res.status(200).json({
                     success: false,
-                    message: `can't delete`,
+                    message: '진행 중인 행사가 있습니다.',
                 });
             }else{
                 conn.query(`DELETE FROM channel WHERE channel_id=?`,params,(err2,result2)=>{

@@ -36,8 +36,9 @@ router.post('/create', (req,res) => {
 })
 
 // 2. 행사 삭제
-router.delete('/delete', (req,res) => {
-    const event_id = req.body.event_id
+router.delete('/delete/:event_id', (req,res) => {
+    const event_id = req.params.event_id
+
     conn.query(`select * from event_participant where event_id='${event_id}'`, (err, result) =>{
         if(result.length != 0){
             res.status(200).json({
