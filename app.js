@@ -9,6 +9,7 @@ dotenv.config({path: path.join(__dirname, `./credentials/.env`)});
 
 
 const passportConfig=require(`./passport/index`);
+const user = require('./routes/user');
 const events = require('./routes/events')
 const mypage = require('./routes/mypage')
 const channel = require('./routes/channel');
@@ -55,6 +56,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', auth);
 app.use('/api/channel',channel);
+app.use('/api/user', user);
 app.use('/api/events', events);
 app.use('/api/mypage', mypage);
 app.use('/api/hostCenter', hostCenter);
