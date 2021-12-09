@@ -115,7 +115,7 @@ router.delete('/:channel_id',(req,res)=>{
 router.post(`/subscribe`,(req,res)=>{
     const params=[req.body.channel_id,req.session.passport.user];
     conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id) VALUES(?,?)`,params,(err1,result1)=>{
-        if(err){
+        if(err1){
             res.status(400).json({
                 success: false,
                 message: err1,
@@ -144,7 +144,7 @@ router.post(`/subscribe`,(req,res)=>{
 router.delete(`/subscribe/:channel_id`,(req,res)=>{
     const params=[req.params.channel_id,req.session.passport.user];
     conn.query(`DELETE FROM channel_subscriber WHERE channel_id=? AND subscriber_id=?`,params,(err1,result1)=>{
-        if(err){
+        if(err1){
             res.status(400).json({
                 success: false,
                 message: err1,
