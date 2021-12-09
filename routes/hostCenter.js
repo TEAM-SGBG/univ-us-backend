@@ -7,7 +7,7 @@ const isLogin = require('./login/isLogin');
 const moment = require('moment');
 
 // 1. 헹사 생성
-router.post('/create', (req,res) => {
+router.post('/create_event', (req,res) => {
     const event_name = req.body.event_name      // 이벤트 명
     const host_id = req.session.passport.user   // 호스트 아이디
     const channel_id = req.body.channel_id      // 채널 아이디
@@ -15,7 +15,12 @@ router.post('/create', (req,res) => {
     const expired_at = moment(req.body.expired_at).format('YYYY-MM-DD HH:MM:SS') // 신청 마감 날짜
     const description = req.body.description    // 세부 내용
     const img_url = req.body.img_url            // 이미지 url
-    const category = req.body.category.value    // 카테고리 (1: 수시행사, 2: 정시행사, 3: 박람회)
+    const category_tag = req.body.category.value    // 카테고리 (1: 수시행사, 2: 정시행사, 3: 박람회)
+    category = 1
+    if(category_tag == 'OFFLINE')
+        category = 2
+    else
+        category = 3
 
     conn.query(`insert into event(category, channel_id, channel_owner_id, name, img_url, created_at, expired_at, description) 
                     values(${category}, '${channel_id}', '${host_id}', '${event_name}', '${img_url}', '${created_at}', '${expired_at}', '${description}')`,(err,result)=>{
@@ -144,5 +149,6 @@ router.get('/:channel_id/events', isLogin, (req, res) => {
     })
     
 });
+
 
 module.exports = router; 
