@@ -274,11 +274,11 @@ router.get('/get_recommanded_events', (req, res) => {
     })
 })
 
-// 12. 특정 사용자가 특정 이벤트를 좋아요 누르는 API
-router.post('/event_like', (req, res) => {
-    const user_id = req.body.id_token
+// 11.5. 좋아요 눌렀는지 알려주는 API
+router.post('/check_event_like', (req, res) => {
+    const user_id = req.session.passport.user
     const event_id = req.body.event_id
-    conn.query(`insert into event_like(user_id, event_id) values('${user_id}', ${event_id})`, (err, result) => {
+    conn.query(`select * from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -287,12 +287,69 @@ router.post('/event_like', (req, res) => {
             })
         }
         else{
+            const is_liked = result.length > 0 ? true : false
             res.status(200).json({
                 success: true,
-                message: "[SUCCESS] api/event_like"
-            })
+                liked: is_liked,
+                message: "[SUCCESS] api/event_like BUT already liked"
+            })     
         }
     })
+})
+
+// 12. 특정 사용자가 특정 이벤트를 좋아요 누르는 API
+router.post('/event_like', (req, res) => {
+    const user_id = req.session.passport.user
+    const event_id = req.body.event_id
+    conn.query(`select * from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] api/event_like"
+            })
+        }
+        else{
+            if(result.length == 0) {
+                conn.query(`insert into event_like(user_id, event_id) values('${user_id}', ${event_id})`, (err, result) => {
+                    if(err){
+                        res.status(400).json({
+                            success: false,
+                            err: err,
+                            message: "[ERROR] api/event_like"
+                        })
+                    }
+                    else{
+                        res.status(200).json({
+                            success: true,
+                            liked: true,
+                            message: "[SUCCESS] api/event_like"
+                        })
+                    }
+                })
+            }
+            else {
+                conn.query(`delete from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
+                    if(err){
+                        res.status(400).json({
+                            success: false,
+                            err: err,
+                            message: "[ERROR] api/event_like"
+                        })
+                    }
+                    else{
+                        res.status(200).json({
+                            success: true,
+                            liked: false,
+                            message: "[SUCCESS] api/event_like"
+                        })
+                    }
+                })
+                
+            }
+        }
+    })
+    
 })
 
 // 13. 특정 행사를 좋아요 누른 사용자 아이디 리스트 가져오기 /api/events/event_like_user_list?event_id=1
