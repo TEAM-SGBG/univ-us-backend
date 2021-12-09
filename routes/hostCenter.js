@@ -19,7 +19,9 @@ router.post('/create_event', (req,res) => {
     console.log(img_url);
 
     category = 1
-    if(category_tag == 'OFFLINE')
+    if(category_tag == 'ONLINE')
+        category = 1
+    else if(category_tag == 'OFFLINE')
         category = 2
     else
         category = 3
@@ -43,7 +45,7 @@ router.post('/create_event', (req,res) => {
 })
 
 // 2. 행사 삭제
-router.delete('/delete/:event_id', (req,res) => {
+router.delete('/:event_id', (req,res) => {
     const event_id = req.params.event_id
 
     conn.query(`select * from event_participant where event_id='${event_id}'`, (err, result) =>{
