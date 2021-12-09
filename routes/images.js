@@ -8,7 +8,7 @@ const multer = require('multer');
 // MULTER CONFIG OPTION
 let storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, "uploads/")
+        callback(null, 'uploads/')
     },
     filename: (req, file, callback) => {
         callback(null, `${Date.now()}_${file.originalname}`)
