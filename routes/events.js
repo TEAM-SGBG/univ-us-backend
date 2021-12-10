@@ -5,23 +5,28 @@ const conn = require('../config/connectDB');
 
 // 1. 전체 행사 정보 불러오기
 router.get('/all_event', (req, res) => {
-    
-    conn.query(`select * from event`,(err,result)=>{
-        if(err){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: 'ERROR events/all_event'
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: 'SUCCESS events/all_event',
-                data: result
-            })
-        }
-    })
+    if(!req.session.passport.user){
+        conn.query(`select * from event`,(err,result)=>{
+            if(err){
+                res.status(400).json({
+                    success: false,
+                    err: err,
+                    message: 'ERROR events/all_event'
+                })
+            }
+            else{
+                res.status(200).json({
+                    success: true,
+                    message: 'SUCCESS events/all_event',
+                    data: result
+                })
+            }
+        })
+    }
+    else{
+        const id_token = req.session.passport.user
+
+    }
 })
 
 // 2. 특정 카테고리 행사 정보 불러오기
@@ -85,7 +90,7 @@ router.post('/apply', (req, res) => {
     const id_token = req.session.passport.user
     const event_id = req.body.event_id
     conn.query(`select * from event_participant where event_id=${event_id} and participant='${id_token}'`, (err, result) => {
-        if(result.length != 0){
+        if(result.length > 0){
             res.status(400).json({
                 success: false,
                 err: err,
@@ -307,7 +312,7 @@ router.get('/event_like_user_list', (req, res) => {
 router.get('/is_applied/:event_id', (req, res) => {
     const id_token = req.session.passport.user
     const event_id = req.params.event_id
-    conn.query(`select * from event_participant where event_id='${event_id}' and user_id='${id_token}'`, (err, result) => {
+    conn.query(`select * from event_participant where event_id='${event_id}' and participant='${id_token}'`, (err, result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -335,4 +340,4 @@ router.get('/is_applied/:event_id', (req, res) => {
     })
 })
 
-module.exports = router; 
+module.exports = router;  
