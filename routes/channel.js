@@ -113,8 +113,8 @@ router.delete('/:channel_id',(req,res)=>{
 });//특정 채널 삭제
 
 router.post(`/subscribe`,(req,res)=>{
-    const params=[req.body.channel_id,req.session.passport.user];
-    conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id) VALUES(?,?)`,params,(err1,result1)=>{
+    const params=[req.body.channel_id,req.session.passport.user,req.user.email];
+    conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id,email) VALUES(?,?,?)`,params,(err1,result1)=>{
         if(err1){
             res.status(400).json({
                 success: false,
