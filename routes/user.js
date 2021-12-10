@@ -1,12 +1,12 @@
 const express=require(`express`);
 const router=express.Router();
-
+const isLogin=require(`./login/isLogin`);
 const conn = require('../config/connectDB');
 
 
 
 // 1. 전체 유저
-router.get('/all_user', (req, res) => {
+router.get('/all_user', isLogin,(req, res) => {
     conn.query(`select * from user`,(err,result)=>{
         if(err){
             res.status(400).json({
