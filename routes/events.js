@@ -299,25 +299,6 @@ router.get('/event_like_user_list', (req, res) => {
     })
 })
 
-// 14. 특정 사용자가 좋아요를 누른 행사 리스트 가져오기 /api/events/user_like_event_list
-router.post('/user_like_event_list', (req, res) => {
-    const user_id = req.body.id_token
-    conn.query(`select event_id from event_like where user_id='${user_id}'`, (err, result) => {
-        if(err){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: "[ERROR] api/user_like_event_list"
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: "[SUCCESS] api/user_like_event_list",
-                data: result
-            })
-        }
-    })
-})
+
 
 module.exports = router; 
