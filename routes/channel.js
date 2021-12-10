@@ -182,7 +182,7 @@ router.get(`/info/:channel_id`,(req,res)=>{
             });
         }else{
             channelInfo=result1[0];
-            conn.query(`SELECT* FROM channel_subscriber WHERE channel_id=?`,params,(err2,result2)=>{
+            conn.query(`SELECT channel_id,email FROM channel_subscriber WHERE channel_id=?`,params,(err2,result2)=>{
                 if(err2){
                     res.status(400).json({
                         success: false,

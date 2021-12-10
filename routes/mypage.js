@@ -24,7 +24,8 @@ router.get('/applied_event', isLogin, (req, res) => {
         if(err){
             res.status(400).json({
                 success: false,
-                message: err
+                err,
+                message: '[ERROR] GET:mypage/applied_event'
             })
         }
         else{
@@ -32,7 +33,7 @@ router.get('/applied_event', isLogin, (req, res) => {
             // console.log(r.event_id)
             res.status(200).json({
                 success: true,
-                message: 'SUCCESS mypage/applied_event',
+                message: '[SUCCESS] GET:mypage/applied_event',
                 data: result
             })
         }
@@ -123,5 +124,27 @@ router.get(`/subscribe_info`,isLogin,(req,res)=>{
         }
     });
 });//구독한 채널 정보 가져옴
+
+// 14. 특정 사용자가 좋아요를 누른 행사 리스트 가져오기 /api/events/user_like_event_list
+router.get('/user_like_event_list', (req, res) => {
+    const id_token = req.session.passport.user
+    conn.query(`select * from event where event_id 
+                    in (select event_id from event_like where user_id='${id_token}')`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] GET:api/mypage/user_like_event_list"
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "[SUCCESS] GET:api/user_like_event_list",
+                data: result
+            })
+        }
+    })
+})
 
 module.exports = router; 

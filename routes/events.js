@@ -3,23 +3,6 @@ const router=express.Router();
 
 const conn = require('../config/connectDB');
 
-/**
- * 1. 전체 행사 정보 불러오기           (GET: api/events/all_event)
- * 2. 특정 카테고리 행사 정보 불러오기    (GET: api/events/category_event?category=N)
- * 3. 헹사 생성                     (POST: api/events/create, [user_id, )
- * 4. 행사 삭제                     (DELETE: api/events/all_event)
- * 5. 행사 신청하기                  (POST: api/events/all_event)
- * 6. 행사 신청 취소하기(유저 입장)      (DELETE: api/events/all_event)
- * 7. 행사 구체 정보 가져오기           (POST: api/events/all_event)
- * 8. 특정 행사에 참여한 사용자 아이디 리스트 가져오기      (POST: api/events/all_event)
- * 9. 인기 이벤트 가져오기(4개)                       (GET: api/events/all_event)
- * 10. 최신 이벤트 가져오기(4개)                      (GET: api/events/all_event)
- * 11. 추천 이벤트 가져오기(4개) // 맹그는 중           (GET: api/events/all_event)
- * 12. 특정 사용자가 특정 이벤트를 좋아요 누르는 API      (POST: api/events/all_event)
- * 13. 특정 행사를 좋아요 누른 사용자 아이디 리스트 가져오기 (GET: api/events/all_event)
- * 14. 특정 사용자가 좋아요를 누른 행사 리스트 가져오기     (POST: api/events/all_event)
- */
-
 // 1. 전체 행사 정보 불러오기
 router.get('/all_event', (req, res) => {
     
@@ -316,25 +299,6 @@ router.get('/event_like_user_list', (req, res) => {
     })
 })
 
-// 14. 특정 사용자가 좋아요를 누른 행사 리스트 가져오기 /api/events/user_like_event_list
-router.post('/user_like_event_list', (req, res) => {
-    const user_id = req.body.id_token
-    conn.query(`select event_id from event_like where user_id='${user_id}'`, (err, result) => {
-        if(err){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: "[ERROR] api/user_like_event_list"
-            })
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: "[SUCCESS] api/user_like_event_list",
-                data: result
-            })
-        }
-    })
-})
+
 
 module.exports = router; 
