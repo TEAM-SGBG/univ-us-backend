@@ -30,7 +30,7 @@ connectDB.connect((err)=>{
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
-app.use(cors({origin : 'http://localhost:3000', credentials : true}));// origin :  Access-Control-Allow-Origin에 들어가는 주소 설정 , credentials : Access-Control-Allow-Origin을 true로 만들어주는 option(허용해주는 option)
+app.use(cors({origin : 'https://univ-us.netlify.app', credentials : true}));// origin :  Access-Control-Allow-Origin에 들어가는 주소 설정 , credentials : Access-Control-Allow-Origin을 true로 만들어주는 option(허용해주는 option)
 
 app.use(cookieParser());
 
