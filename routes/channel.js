@@ -87,10 +87,11 @@ router.delete('/:channel_id',(req,res)=>{
     //행사 하나라도 있으면 삭제 못하게
     const params=[req.params.channel_id]
     conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,params,(err1,result1)=>{
-        if(err1){
-            res.status(400).json({
+        if(err1||result1){
+                const msg= err1!=null?err1:'채널에 행사가 있어 삭제 불가'
+                res.status(400).json({
                     success: false,
-                    message: '진행 중인 행사가 있습니다.',
+                    message: msg,
                 });
             }else{
                 conn.query(`DELETE FROM channel WHERE channel_id=?`,params,(err2,result2)=>{
@@ -114,31 +115,49 @@ router.delete('/:channel_id',(req,res)=>{
 
 router.post(`/subscribe`,(req,res)=>{
     const params=[req.body.channel_id,req.session.passport.user,req.user.email];
-    conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id,email) VALUES(?,?,?)`,params,(err1,result1)=>{
-        if(err1){
+    conn.query(`SELECT EXISTS(SELECT*FROM channel_subscriber WHERE channel_id=? and subscriber_id=?) as success`,[params[0],params[1]],(err,result)=>{
+        if(err){
             res.status(400).json({
                 success: false,
-                message: err1,
+                message: err,
             });
         }else{
-            conn.query(`UPDATE channel SET subscribe_count=subscribe_count+1 WHERE channel_id=?`,[params[0]],(err2,result2)=>{
-                if(err2){
-                    res.status(400).json({
-                        success: false,
-                        message: err2,
-                    });
-                }else{
-                    res.status(200).json({
-                        success:true,
-                        message:'SUCCESS POST:channel/subscribe',
-                        data:result2,
-                    });
-                }
-
-            });
+            if(!result){
+                conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id,email) VALUES(?,?,?)`,params,(err1,result1)=>{
+                    if(err1){
+                        res.status(400).json({
+                            success: false,
+                            message: err1,
+                        });
+                    }else{
+                        conn.query(`UPDATE channel SET subscribe_count=subscribe_count+1 WHERE channel_id=?`,[params[0]],(err2,result2)=>{
+                            if(err2){
+                                res.status(400).json({
+                                    success: false,
+                                    message: err2,
+                                });
+                            }else{
+                                res.status(200).json({
+                                    success:true,
+                                    message:'SUCCESS POST:channel/subscribe',
+                                    data:result2,
+                                });
+                            }
+            
+                        });
+                    }
+                    //subscribe 수정
+                });
+            }else{
+                res.status(400).json({
+                    success: false,
+                    message: '이미구독중인채널',
+                });
+            }
         }
-        //subscribe 수정
-    });
+   
+    })
+ 
 });//구독하기
 
 router.delete(`/subscribe/:channel_id`,(req,res)=>{
