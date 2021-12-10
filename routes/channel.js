@@ -87,8 +87,8 @@ router.delete('/:channel_id',(req,res)=>{
     //행사 하나라도 있으면 삭제 못하게
     const params=[req.params.channel_id]
     conn.query(`SELECT EXISTS(SELECT*FROM event WHERE channel_owner_id=?) as success`,params,(err1,result1)=>{
-        if(err1||result1){
-                const msg= err1!=null?err1:'채널에 행사가 있어 삭제 불가'
+        if(err1||result1[0].success){
+                const msg= err1!=null?err1:result1[0].success+'개의 행사가 채널에 있어 삭제 불가'
                 res.status(400).json({
                     success: false,
                     message: msg,
@@ -115,14 +115,18 @@ router.delete('/:channel_id',(req,res)=>{
 
 router.post(`/subscribe`,(req,res)=>{
     const params=[req.body.channel_id,req.session.passport.user,req.user.email];
+    console.log("호출");
     conn.query(`SELECT EXISTS(SELECT*FROM channel_subscriber WHERE channel_id=? and subscriber_id=?) as success`,[params[0],params[1]],(err,result)=>{
         if(err){
+            console.log(err);
             res.status(400).json({
                 success: false,
                 message: err,
             });
         }else{
-            if(!result){
+          
+            if(!result[0].success){
+                console.log("진행");
                 conn.query(`INSERT INTO channel_subscriber(channel_id,subscriber_id,email) VALUES(?,?,?)`,params,(err1,result1)=>{
                     if(err1){
                         res.status(400).json({
@@ -145,8 +149,7 @@ router.post(`/subscribe`,(req,res)=>{
                             }
             
                         });
-                    }
-                    //subscribe 수정
+                    }  //subscribe 수정
                 });
             }else{
                 res.status(400).json({
