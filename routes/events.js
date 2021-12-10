@@ -269,9 +269,9 @@ router.post('/check_event_like', (req, res) => {
 
 // 12. 특정 사용자가 특정 이벤트를 좋아요 누르는 API
 router.post('/event_like', (req, res) => {
-    const user_id = req.body.id_token
+    const user_id = req.session.passport.user
     const event_id = req.body.event_id
-    conn.query(`insert into event_like(user_id, event_id) values('${user_id}', ${event_id})`, (err, result) => {
+    conn.query(`select * from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
         if(err){
             res.status(400).json({
                 success: false,
@@ -280,10 +280,43 @@ router.post('/event_like', (req, res) => {
             })
         }
         else{
-            res.status(200).json({
-                success: true,
-                message: "[SUCCESS] api/event_like"
-            })
+            if(result.length == 0) {
+                conn.query(`insert into event_like(user_id, event_id) values('${user_id}', ${event_id})`, (err, result) => {
+                    if(err){
+                        res.status(400).json({
+                            success: false,
+                            err: err,
+                            message: "[ERROR] api/event_like"
+                        })
+                    }
+                    else{
+                        res.status(200).json({
+                            success: true,
+                            liked: true,
+                            message: "[SUCCESS] api/event_like"
+                        })
+                    }
+                })
+            }
+            else {
+                conn.query(`delete from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
+                    if(err){
+                        res.status(400).json({
+                            success: false,
+                            err: err,
+                            message: "[ERROR] api/event_like"
+                        })
+                    }
+                    else{
+                        res.status(200).json({
+                            success: true,
+                            liked: false,
+                            message: "[SUCCESS] api/event_like"
+                        })
+                    }
+                })
+
+            }
         }
     })
 })
