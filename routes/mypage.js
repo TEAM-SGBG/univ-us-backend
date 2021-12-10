@@ -125,7 +125,7 @@ router.get(`/subscribe_info`,isLogin,(req,res)=>{
     });
 });//구독한 채널 정보 가져옴
 
-// 14. 특정 사용자가 좋아요를 누른 행사 리스트 가져오기 /api/events/user_like_event_list
+// . 특정 사용자가 좋아요를 누른 행사 리스트 가져오기 /api/events/user_like_event_list
 router.get('/user_like_event_list', (req, res) => {
     const id_token = req.session.passport.user
     conn.query(`select * from event where event_id 

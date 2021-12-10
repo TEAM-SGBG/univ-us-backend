@@ -82,26 +82,8 @@ router.get('/category_event', (req, res) => {
 
 // 5. 행사 신청하기
 router.post('/apply', (req, res) => {
-    const id_token = req.body.id_token
+    const id_token = req.session.passport.user
     const event_id = req.body.event_id
-    conn.query(`select * from user where id_token='${id_token}'`, (err, result) => {
-        if(result.length == 0){
-            res.status(400).json({
-                success: false,
-                err: err,
-                description: "user_id error"
-            })
-        }
-    })
-    conn.query(`select * from event where event_id=${event_id}`, (err, result) => {
-        if(result.length == 0){
-            res.status(400).json({
-                success: false,
-                err: err,
-                message: "event_id error"
-            })
-        }
-    })
     conn.query(`select * from event_participant where event_id=${event_id} and participant='${id_token}'`, (err, result) => {
         if(result.length != 0){
             res.status(400).json({
@@ -129,8 +111,8 @@ router.post('/apply', (req, res) => {
 })
 
 // 6. 행사 신청 취소하기(유저 입장)
-router.delete('/cancel', (req, res) => {
-    const id_token = req.body.id_token
+router.post('/cancel', (req, res) => {
+    const id_token = req.session.passport.user
     const event_id = req.body.event_id
     conn.query(`select * from user where id_token='${id_token}'`, (err, result) => {
         if(result == null){
@@ -257,6 +239,29 @@ router.get('/get_recommanded_events', (req, res) => {
     })
 })
 
+// 11.5. 좋아요 눌렀는지 알려주는 API
+router.post('/check_event_like', (req, res) => {
+    const user_id = req.session.passport.user
+    const event_id = req.body.event_id
+    conn.query(`select * from event_like where user_id='${user_id}' and event_id='${event_id}'`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] api/events/check_event_like"
+            })
+        }
+        else{
+            const liked = result.length > 0 ? true : false
+            res.status(200).json({
+                success: true,
+                liked: liked,
+                message: "[SUCCESS] api/events/check_event_like"
+            })
+        }
+    })
+})
+
 // 12. 특정 사용자가 특정 이벤트를 좋아요 누르는 API
 router.post('/event_like', (req, res) => {
     const user_id = req.body.id_token
@@ -299,6 +304,35 @@ router.get('/event_like_user_list', (req, res) => {
     })
 })
 
-
+router.get('/is_applied/:event_id', (req, res) => {
+    const id_token = req.session.passport.user
+    const event_id = req.params.event_id
+    conn.query(`select * from event_participant where event_id='${event_id}' and user_id='${id_token}'`, (err, result) => {
+        if(err){
+            res.status(400).json({
+                success: false,
+                err: err,
+                message: "[ERROR] GET:api/events/is_user_applied/"
+            })
+        }
+        else{
+            if(result.length > 0){
+                res.status(200).json({
+                    success: true,
+                    message: "[SUCCESS] GET:api/events/is_user_applied/",
+                    applied: true // 이미 신청함
+                })
+            }
+            else{
+                res.status(200).json({
+                    success: true,
+                    message: "[SUCCESS] GET:api/events/is_user_applied/",
+                    applied: false // 아직 신청안함
+                })
+            }
+            
+        }
+    })
+})
 
 module.exports = router; 
